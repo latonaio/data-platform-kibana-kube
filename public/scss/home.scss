@@ -1,0 +1,17 @@
+
+/*
+ * Change the header color
+ */
+
+ .ckl-app-home {
+
+    /*
+     * Change the top nav color only on the home page
+     */
+    .euiHeader.header__firstBar {
+       background-color: #00b0f0 !important;
+       border-bottom-color: #00b0f0 !important;
+      //background-color: gray !important;
+      //border-bottom-color: gray !important;
+   }
+ }

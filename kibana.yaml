@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-platform-kibana-kube
+  labels:
+    app: data-platform-kibana-kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-platform-kibana-kube
+  template:
+    metadata:
+      labels:
+        app: data-platform-kibana-kube
+    spec:
+      nodeName: worker
+      containers:
+        - name: data-platform-kibana-kube
+#          image: docker.elastic.co/kibana/kibana:8.9.2
+          image: latonaio/data-platform-kibana-kube:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5601
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://elasticsearch:9200
+          envFrom:
+            - configMapRef:
+                name: env-config
+            - secretRef:
+                name: env-secret
+          volumeMounts:
+            - name: kibana-config
+              mountPath: /usr/share/kibana/config/kibana.yml
+              subPath: kibana.yml
+      volumes:
+        - name: kibana-config
+          configMap:
+            name: kibana-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-platform-kibana-kube
+spec:
+  selector:
+    app: data-platform-kibana-kube
+  type: NodePort
+  ports:
+    - port: 5601
+      nodePort: 30924
+---
